@@ -34,6 +34,124 @@ The project includes these 11 tables:
 
 The schema uses primary and foreign keys to link these entities.
 
+## Entity Relationship Diagram
+
+```mermaid
+erDiagram
+
+    CUSTOMERS {
+        INT customer_id PK
+        VARCHAR customer_name
+        VARCHAR email
+        VARCHAR phone
+        VARCHAR customer_type
+    }
+
+    ADDRESSES {
+        INT address_id PK
+        INT customer_id FK
+        VARCHAR city
+        VARCHAR state
+        VARCHAR address_type
+    }
+
+    BRANCHES {
+        INT branch_id PK
+        VARCHAR branch_name
+        VARCHAR city
+        VARCHAR state
+    }
+
+    EMPLOYEES {
+        INT employee_id PK
+        INT branch_id FK
+        VARCHAR employee_name
+        VARCHAR designation
+    }
+
+    PARCELS {
+        INT parcel_id PK
+        INT customer_id FK
+        INT pickup_address_id FK
+        INT delivery_address_id FK
+        VARCHAR parcel_type
+        DECIMAL weight_kg
+        DECIMAL declared_value
+    }
+
+    SHIPMENTS {
+        INT shipment_id PK
+        INT parcel_id FK
+        INT origin_branch_id FK
+        INT destination_branch_id FK
+        VARCHAR tracking_number
+        VARCHAR shipment_status
+        DATE shipment_date
+    }
+
+    TRACKING {
+        INT tracking_id PK
+        INT shipment_id FK
+        INT branch_id FK
+        VARCHAR tracking_status
+        DATE update_date
+        TIME update_time
+    }
+
+    DELIVERY_AGENTS {
+        INT agent_id PK
+        INT branch_id FK
+        VARCHAR agent_name
+        VARCHAR phone
+    }
+
+    DELIVERY_ASSIGNMENTS {
+        INT assignment_id PK
+        INT shipment_id FK
+        INT agent_id FK
+        DATE assignment_date
+        VARCHAR assignment_status
+    }
+
+    PAYMENTS {
+        INT payment_id PK
+        INT parcel_id FK
+        DATE payment_date
+        VARCHAR payment_method
+        DECIMAL payment_amount
+        VARCHAR payment_status
+    }
+
+    DELIVERY_RATINGS {
+        INT rating_id PK
+        INT shipment_id FK
+        INT customer_id FK
+        INT rating_value
+        DATE rating_date
+    }
+
+    CUSTOMERS ||--o{ ADDRESSES : has
+    CUSTOMERS ||--o{ PARCELS : books
+    CUSTOMERS ||--o{ DELIVERY_RATINGS : gives
+
+    ADDRESSES ||--o{ PARCELS : pickup_address
+    ADDRESSES ||--o{ PARCELS : delivery_address
+
+    BRANCHES ||--o{ EMPLOYEES : employs
+    BRANCHES ||--o{ SHIPMENTS : origin_branch
+    BRANCHES ||--o{ SHIPMENTS : destination_branch
+    BRANCHES ||--o{ TRACKING : logs_updates
+    BRANCHES ||--o{ DELIVERY_AGENTS : has
+
+    PARCELS ||--|| SHIPMENTS : becomes
+    PARCELS ||--o{ PAYMENTS : has
+
+    SHIPMENTS ||--o{ TRACKING : has
+    SHIPMENTS ||--o{ DELIVERY_ASSIGNMENTS : assigned_in
+    SHIPMENTS ||--o| DELIVERY_RATINGS : receives
+
+    DELIVERY_AGENTS ||--o{ DELIVERY_ASSIGNMENTS : handles
+
 ## SQL concepts demonstrated
 
 - Relational schema creation and constraints
