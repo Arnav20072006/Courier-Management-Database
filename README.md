@@ -152,6 +152,8 @@ erDiagram
 
     DELIVERY_AGENTS ||--o{ DELIVERY_ASSIGNMENTS : handles
 
+```
+
 ## SQL concepts demonstrated
 
 - Relational schema creation and constraints
